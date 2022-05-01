@@ -1,0 +1,20 @@
+{
+  "name": "uptime-monitor",
+  "version": "1.0.0",
+  "description": "An uptime monitor using vanilla nodejs",
+  "main": "index.js",
+  "repository": "https://github.com/muhon9/uptime-monitor-nodejs.git",
+  "author": "Sultan Al Muhon",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.6.2"
+  }
+}
