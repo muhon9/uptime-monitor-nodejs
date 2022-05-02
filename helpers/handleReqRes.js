@@ -49,6 +49,17 @@ handler.handleReqRes = (req, res) => {
 
     req.on('end', () => {
         realData += decoder.end();
+        chosenHandler(requestProperties, (statusCode, payload) => {
+            // eslint-disable-next-line no-param-reassign
+            statusCode = typeof statusCode === 'number' ? statusCode : 500;
+            // eslint-disable-next-line no-param-reassign
+            payload = typeof payload === 'object' ? payload : {};
+
+            const payloadString = JSON.stringify(payload);
+            // return the final response
+            res.writeHead(statusCode);
+            res.end(payloadString);
+        });
         res.end();
     });
 };
