@@ -3,11 +3,13 @@ const environments = {};
 environments.development = {
     port: 8000,
     envName: 'development',
+    secreteKey: '123456',
 };
 
 environments.production = {
     port: 5000,
     envName: 'production',
+    secreteKey: 'asdfadfga',
 };
 
 // get current environment from env variable

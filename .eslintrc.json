@@ -8,6 +8,9 @@
     "node": true
   },
   "rules": {
+    "object-curly-newline": "off",
+    "operator-linebreak": "off",
+    "no-underscore-dangle": "off",
     "no-unused-vars": "warn",
     "no-console": 0,
     "indent": 0,
