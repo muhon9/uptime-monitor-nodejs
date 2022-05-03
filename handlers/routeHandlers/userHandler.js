@@ -1,5 +1,6 @@
 const { hash, parseJSON } = require('../../helpers/utilities');
 const dataLib = require('../../lib/dataLib');
+const tokenHandler = require('./tokenHandler');
 
 const handler = {};
 
@@ -88,14 +89,22 @@ handler._user.get = (requestProperties, callback) => {
             : false;
 
     if (phone) {
-        dataLib.read('users', phone, (err, userData) => {
-            const user = { ...parseJSON(userData) };
-            if (!err && user) {
-                delete user.password;
-                callback(200, user);
+        tokenHandler._token.verify(phone, requestProperties.headerObject.token, (token) => {
+            if (token) {
+                dataLib.read('users', phone, (err, userData) => {
+                    const user = { ...parseJSON(userData) };
+                    if (!err && user) {
+                        delete user.password;
+                        callback(200, user);
+                    } else {
+                        callback(500, {
+                            error: 'no such user in database',
+                        });
+                    }
+                });
             } else {
-                callback(500, {
-                    error: 'no such user in database',
+                callback(404, {
+                    error: 'Authentication failed',
                 });
             }
         });
@@ -132,32 +141,40 @@ handler._user.put = (requestProperties, callback) => {
             : false;
 
     if (phone) {
-        dataLib.read('users', phone, (err, userData) => {
-            const user = { ...parseJSON(userData) };
+        tokenHandler._token.verify(phone, requestProperties.headerObject.token, (token) => {
+            if (token) {
+                dataLib.read('users', phone, (err, userData) => {
+                    const user = { ...parseJSON(userData) };
 
-            if (!err) {
-                if (firstName) {
-                    user.firstName = firstName;
-                }
-                if (lastName) {
-                    user.lastName = lastName;
-                }
-                if (password) {
-                    user.password = hash(password);
-                }
-                // update the user data
-                dataLib.update('users', phone, user, (err2, updatedData) => {
-                    if (!err2) {
-                        callback(200, updatedData);
+                    if (!err) {
+                        if (firstName) {
+                            user.firstName = firstName;
+                        }
+                        if (lastName) {
+                            user.lastName = lastName;
+                        }
+                        if (password) {
+                            user.password = hash(password);
+                        }
+                        // update the user data
+                        dataLib.update('users', phone, user, (err2, updatedData) => {
+                            if (!err2) {
+                                callback(200, updatedData);
+                            } else {
+                                callback(500, {
+                                    error: 'Update failed',
+                                });
+                            }
+                        });
                     } else {
                         callback(500, {
-                            error: 'Update failed',
+                            error: 'No user with the number',
                         });
                     }
                 });
             } else {
-                callback(500, {
-                    error: 'No user with the number',
+                callback(404, {
+                    error: 'Authentication failed',
                 });
             }
         });
@@ -176,22 +193,30 @@ handler._user.delete = (requestProperties, callback) => {
             : false;
 
     if (phone) {
-        dataLib.read('users', phone, (err, userData) => {
-            if (!err && userData) {
-                dataLib.remove('users', phone, (err2) => {
-                    if (!err) {
-                        callback(200, {
-                            message: 'File deleted successfully',
+        tokenHandler._token.verify(phone, requestProperties.headerObject.token, (token) => {
+            if (token) {
+                dataLib.read('users', phone, (err, userData) => {
+                    if (!err && userData) {
+                        dataLib.remove('users', phone, (err2) => {
+                            if (!err2) {
+                                callback(200, {
+                                    message: 'File deleted successfully',
+                                });
+                            } else {
+                                callback(400, {
+                                    error: 'File deleting failed',
+                                });
+                            }
                         });
                     } else {
                         callback(400, {
-                            error: 'File deleting failed',
+                            error: 'No such file exist',
                         });
                     }
                 });
             } else {
-                callback(400, {
-                    error: 'No such file exist',
+                callback(404, {
+                    error: 'Authentication failed',
                 });
             }
         });
