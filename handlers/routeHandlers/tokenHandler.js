@@ -1,4 +1,4 @@
-const { hash, parseJSON, generateToken } = require('../../helpers/utilities');
+const { hash, parseJSON, createRandomString } = require('../../helpers/utilities');
 const dataLib = require('../../lib/dataLib');
 
 const handler = {};
@@ -36,7 +36,7 @@ handler._token.post = (requestProperties, callback) => {
             if (!err1 && userData) {
                 const hashedPassword = hash(password);
                 if (hashedPassword === parseJSON(userData).password) {
-                    const tokenId = generateToken(20);
+                    const tokenId = createRandomString(20);
                     const expire = Date.now() + 60 * 60 * 1000;
                     const tokenDataObject = {
                         phone,

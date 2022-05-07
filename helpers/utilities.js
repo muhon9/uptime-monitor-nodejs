@@ -16,7 +16,7 @@ utilities.parseJSON = (str) => {
 // eslint-disable-next-line prettier/prettier
 utilities.hash = (str) => crypto.createHmac('sha256', environment.secreteKey).update(str).digest('hex');
 
-utilities.generateToken = (strlength) => {
+utilities.createRandomString = (strlength) => {
     const charOptions = 'abcdefghijklmnopqrstuvwxyz123456789';
     let output = '';
 
